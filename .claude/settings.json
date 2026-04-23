@@ -1,0 +1,9 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(pkill -f \"http.server\")",
+      "Bash(python -m http.server 7777 --bind 127.0.0.1)",
+      "Bash(timeout 2 python -m http.server 7777)"
+    ]
+  }
+}

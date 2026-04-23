@@ -1,0 +1,2566 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lienzo y Fuego — Dominio Culinario con Criterio</title>
+    <meta name="description" content="No aprenderás recetas. Aprenderás a cocinar con criterio, fuego y carácter. El sistema culinario para personas que quieren dejar marca.">
+    <meta property="og:title" content="Lienzo y Fuego — Dominio Culinario">
+    <meta property="og:description" content="De cocinar bien a cocinar diferente. Desarrolla tu identidad culinaria con el sistema exclusivo de Mateo.">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700;900&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        /* ─── TOKENS — LIENZO Y FUEGO BRAND ─────────────────── */
+        :root {
+            /* Surfaces — refinados para más contraste */
+            --c-void:      #030304;
+            --c-deep:      #0a0a0d;
+            --c-surface:   #121215;
+            --c-raised:    #1a191e;
+            --c-border:    rgba(255,255,255,0.05);
+            /* Brand — Rojo Lienzo y Fuego refinado */
+            --c-brand:     #D32F2F;          /* rojo más limpio y refinado */
+            --c-brand-deep:#a01f1f;          /* rojo oscuro hover */
+            --c-brand-glow:rgba(211,47,47,0.25);
+            --c-border-brand: rgba(211,47,47,0.2);
+            /* Accents */
+            --c-ember:     #D32F2F;          /* accent principal = brand */
+            --c-ember-soft:rgba(211,47,47,0.08);
+            --c-flame:     #E53935;          /* variante clara */
+            --c-gold:      #B71C1C;          /* variante oscura */
+            /* Text — mejorado contraste */
+            --c-text:      #f5f3f0;
+            --c-muted:     #8a8783;
+            --c-sub:       #aba7a0;
+            --c-cream:     #faf8f5;
+            /* Radius / Easing */
+            --r-sm:        4px;
+            --r-md:        10px;
+            --r-lg:        16px;
+            --ease-out:    cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        /* ─── RESET ──────────────────────────────────────────── */
+        *, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
+        html { scroll-behavior:smooth; font-size:16px; }
+        body {
+            font-family: 'Inter', system-ui, sans-serif;
+            background: var(--c-void);
+            color: var(--c-text);
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+        img { display:block; max-width:100%; height:auto; }
+        img[width][height] { aspect-ratio: attr(width) / attr(height); }
+        a { text-decoration:none; color:inherit; }
+        button { font-family:inherit; cursor:pointer; }
+
+        /* ─── SCROLLBAR ───────────────────────────────────────── */
+        ::-webkit-scrollbar { width:6px; }
+        ::-webkit-scrollbar-track { background:var(--c-deep); }
+        ::-webkit-scrollbar-thumb { background:var(--c-brand); border-radius:99px; }
+
+        /* ─── SELECTION ───────────────────────────────────────── */
+        ::selection { background:rgba(196,30,42,0.3); color:var(--c-cream); }
+
+        /* ─── NAV ────────────────────────────────────────────── */
+        .nav {
+            position: fixed;
+            top: 0; left: 0; right: 0;
+            z-index: 900;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 1.25rem 3rem;
+            transition: background 0.5s cubic-bezier(0.4, 0, 0.2, 1), border-color 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+            animation: slideDown 0.6s 0.1s var(--ease-out) both;
+        }
+        .nav.scrolled {
+            background: rgba(3,3,4,0.96);
+            backdrop-filter: blur(32px);
+            -webkit-backdrop-filter: blur(32px);
+            border-bottom: 1.5px solid var(--c-border-brand);
+            box-shadow: 0 8px 24px rgba(0,0,0,0.4);
+        }
+        /* Logo: imagen real horizontal */
+        .nav-logo {
+            display: flex;
+            align-items: center;
+        }
+        .nav-logo-img {
+            height: 34px;
+            width: auto;
+            display: block;
+            /* Pill blanco limpio: el logo tiene fondo blanco y se ve perfectamente */
+            background: #ffffff;
+            border-radius: 6px;
+            padding: 4px 12px;
+            box-shadow: 0 2px 12px rgba(0,0,0,0.25);
+            transition: box-shadow 0.25s, opacity 0.25s;
+        }
+        .nav-logo-img:hover {
+            box-shadow: 0 4px 20px rgba(196,30,42,0.3);
+            opacity: 0.92;
+        }
+        .nav-cta {
+            background: transparent;
+            color: var(--c-brand);
+            border: 1.5px solid var(--c-brand);
+            padding: 0.65rem 1.85rem;
+            border-radius: var(--r-sm);
+            font-size: 0.75rem;
+            font-weight: 600;
+            letter-spacing: 1.2px;
+            text-transform: uppercase;
+            transition: background 0.3s, color 0.3s, box-shadow 0.3s;
+        }
+        .nav-cta:hover {
+            background: var(--c-brand);
+            color: #fff;
+            box-shadow: 0 8px 24px rgba(211,47,47,0.25);
+        }
+
+        /* ─── HERO: dos columnas, VSL protagonista ─────────── */
+        .hero {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            position: relative;
+            background: var(--c-void);
+            overflow: hidden;
+        }
+        @keyframes heroZoom {
+            from { transform: scale(1.06); }
+            to   { transform: scale(1); }
+        }
+        /* Glow de marca sutil en fondo */
+        .hero::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background:
+                radial-gradient(ellipse 70% 60% at 62% 50%, rgba(211,47,47,0.05) 0%, transparent 70%),
+                radial-gradient(ellipse 40% 50% at 8% 80%, rgba(211,47,47,0.02) 0%, transparent 60%);
+            pointer-events: none;
+        }
+        .hero-inner {
+            position: relative;
+            z-index: 2;
+            width: 100%;
+            max-width: 1280px;
+            margin: 0 auto;
+            padding: 7rem 3rem 3.5rem;
+            display: grid;
+            grid-template-columns: 1fr 1.22fr;
+            gap: 3.5rem;
+            align-items: center;
+        }
+        /* Logo en hero — pill blanco limpio */
+        .hero-logo {
+            height: 44px;
+            width: auto;
+            background: #fff;
+            border-radius: 7px;
+            padding: 5px 14px;
+            margin-bottom: 2rem;
+            display: inline-block;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.4);
+            animation: fadeUp 0.9s 0.1s var(--ease-out) both;
+        }
+        /* Bloque del VSL */
+        .hero-vsl {
+            position: relative;
+            animation: fadeUp 1s 0.35s var(--ease-out) both;
+        }
+        .hero-vsl-frame {
+            position: relative;
+            width: 100%;
+            aspect-ratio: 16/9;
+            border-radius: 16px;
+            overflow: hidden;
+            box-shadow:
+                0 0 0 1px rgba(196,30,42,0.22),
+                0 32px 80px rgba(0,0,0,0.75),
+                0 0 60px rgba(196,30,42,0.1);
+        }
+        .hero-vsl-frame iframe {
+            position: absolute;
+            inset: 0;
+            width: 100%;
+            height: 100%;
+            border: none;
+        }
+        .hero-vsl-glow {
+            position: absolute;
+            bottom: -28px;
+            left: 12%;
+            right: 12%;
+            height: 55px;
+            background: rgba(196,30,42,0.22);
+            filter: blur(28px);
+            border-radius: 50%;
+            pointer-events: none;
+        }
+        .vsl-badge {
+            position: absolute;
+            top: -14px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: var(--c-brand);
+            color: #fff;
+            font-size: 0.68rem;
+            font-weight: 700;
+            letter-spacing: 0.12em;
+            text-transform: uppercase;
+            padding: 5px 18px;
+            border-radius: 99px;
+            white-space: nowrap;
+            z-index: 5;
+        }
+        @media (max-width: 900px) {
+            .hero-inner { grid-template-columns: 1fr; padding-top: 6rem; gap: 2.5rem; }
+            .hero-text { text-align: center; }
+            .hero-logo { margin: 0 auto 1.5rem; display: block; }
+            .hero-actions { justify-content: center; }
+        }
+        /* ─── BANDA AUTORIDAD INSTAGRAM ───────────────────── */
+        .authority-strip {
+            background: #0a0a0d;
+            border-top: 1px solid rgba(255,255,255,0.06);
+            border-bottom: 1px solid rgba(255,255,255,0.06);
+            padding: 4rem 3rem;
+        }
+        .authority-strip-inner {
+            max-width: 960px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: auto 1fr auto;
+            gap: 3rem;
+            align-items: center;
+        }
+        .authority-avatar {
+            width: 110px;
+            height: 110px;
+            border-radius: 50%;
+            object-fit: cover;
+            object-position: center top;
+            border: 2.5px solid var(--c-brand);
+            box-shadow: 0 0 0 8px rgba(211,47,47,0.1), 0 16px 40px rgba(0,0,0,0.4);
+            flex-shrink: 0;
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+        .authority-avatar:hover {
+            transform: scale(1.05);
+            box-shadow: 0 0 0 8px rgba(211,47,47,0.15), 0 20px 48px rgba(0,0,0,0.5);
+        }
+        .authority-handle {
+            font-size: 0.72rem;
+            letter-spacing: 0.12em;
+            text-transform: uppercase;
+            color: var(--c-brand);
+            font-weight: 600;
+            margin-bottom: 0.25rem;
+        }
+        .authority-name {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.55rem;
+            color: var(--c-cream);
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+        }
+        .authority-bio {
+            font-size: 0.87rem;
+            color: var(--c-text-muted);
+            line-height: 1.65;
+            max-width: 440px;
+        }
+        .authority-stats {
+            display: flex;
+            flex-direction: column;
+            gap: 0.8rem;
+            min-width: 120px;
+        }
+        .authority-stat-item {
+            border: 1px solid rgba(255,255,255,0.08);
+            border-radius: 10px;
+            padding: 0.7rem 1.2rem;
+            background: rgba(255,255,255,0.03);
+            text-align: center;
+        }
+        .authority-stat-num {
+            font-size: 1.3rem;
+            font-weight: 700;
+            color: var(--c-cream);
+            letter-spacing: -0.02em;
+        }
+        .authority-stat-label {
+            font-size: 0.65rem;
+            color: var(--c-text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+        }
+        .authority-ig-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            margin-top: 1.1rem;
+            background: linear-gradient(135deg, #e1306c, #c13584, #833ab4);
+            color: #fff;
+            font-size: 0.8rem;
+            font-weight: 600;
+            padding: 0.6rem 1.3rem;
+            border-radius: 99px;
+            text-decoration: none;
+            transition: opacity 0.2s, transform 0.2s;
+        }
+        .authority-ig-btn:hover { opacity: 0.85; transform: translateY(-1px); }
+        @media (max-width: 768px) {
+            .authority-strip-inner { grid-template-columns: 1fr; text-align: center; }
+            .authority-avatar { margin: 0 auto; }
+            .authority-stats { flex-direction: row; flex-wrap: wrap; justify-content: center; }
+            .authority-bio { margin: 0 auto; }
+            .authority-ig-btn { margin: 0.8rem auto 0; }
+        }
+        .hero-eyebrow {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.6rem;
+            font-size: 0.7rem;
+            letter-spacing: 3px;
+            text-transform: uppercase;
+            color: var(--c-brand);
+            font-weight: 600;
+            margin-bottom: 1.5rem;
+            animation: fadeUp 1s 0.3s var(--ease-out) both;
+        }
+        .hero-eyebrow::before {
+            content: '';
+            width: 32px; height: 1px;
+            background: var(--c-brand);
+        }
+        .hero-h1 {
+            font-family: 'Playfair Display', serif;
+            font-size: clamp(3rem, 6.5vw, 5.5rem);
+            font-weight: 900;
+            line-height: 1.08;
+            letter-spacing: -0.8px;
+            color: var(--c-cream);
+            margin-bottom: 1.5rem;
+            animation: fadeUp 1s 0.5s var(--ease-out) both;
+        }
+        .hero-h1 em {
+            font-style: normal;
+            color: var(--c-brand);
+            -webkit-text-stroke: 0;
+        }
+        .hero-sub {
+            font-size: 1.15rem;
+            color: var(--c-sub);
+            max-width: 560px;
+            line-height: 1.75;
+            margin-bottom: 2.5rem;
+            animation: fadeUp 1s 0.7s var(--ease-out) both;
+        }
+        .hero-actions {
+            display: flex;
+            align-items: center;
+            gap: 1.25rem;
+            flex-wrap: wrap;
+            animation: fadeUp 1s 0.9s var(--ease-out) both;
+        }
+        .btn-primary {
+            background: var(--c-brand);
+            color: #fff;
+            border: none;
+            padding: 1.05rem 2.8rem;
+            border-radius: var(--r-sm);
+            font-size: 0.88rem;
+            font-weight: 600;
+            letter-spacing: 0.8px;
+            text-transform: uppercase;
+            transition: transform 0.3s var(--ease-out), box-shadow 0.3s, background 0.3s;
+            position: relative;
+            overflow: hidden;
+        }
+        .btn-primary::after {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: rgba(255,255,255,0);
+            transition: background 0.3s;
+        }
+        .btn-primary:hover {
+            background: var(--c-brand-deep);
+            transform: translateY(-2px);
+            box-shadow: 0 20px 48px rgba(211,47,47,0.3);
+        }
+        .btn-primary:hover::after {
+            background: rgba(255,255,255,0.08);
+        }
+        .btn-cta-hero:hover {
+            background: #b71c1c;
+            transform: scale(1.08);
+            box-shadow: 0 0 0 0 rgba(211, 47, 47, 0.7), 0 24px 64px rgba(211,47,47,0.4);
+        }
+        .btn-ghost {
+            background: transparent;
+            color: var(--c-sub);
+            border: none;
+            padding: 1rem 0;
+            font-size: 0.85rem;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            transition: color 0.2s;
+        }
+        .btn-ghost:hover { color: var(--c-cream); }
+        .btn-ghost-arrow {
+            width: 28px; height: 28px;
+            border: 1px solid currentColor;
+            border-radius: 50%;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 0.8rem;
+            transition: transform 0.3s;
+        }
+        .btn-ghost:hover .btn-ghost-arrow { transform: translateX(4px); }
+
+        .hero-stats {
+            position: absolute;
+            bottom: 3rem; right: 3rem;
+            display: flex; flex-direction: column; gap: 1rem;
+            z-index: 2;
+            animation: fadeLeft 1s 1.1s var(--ease-out) both;
+        }
+        .hero-stat {
+            text-align: right;
+        }
+        .hero-stat-num {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: var(--c-brand);
+            line-height: 1;
+        }
+        .hero-stat-label {
+            font-size: 0.7rem;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            color: var(--c-muted);
+        }
+        .hero-divider {
+            width: 1px; height: 40px;
+            background: var(--c-border-brand);
+            margin-left: auto;
+        }
+
+        /* ─── STRIP ──────────────────────────────────────────── */
+        .strip {
+            background: var(--c-surface);
+            border-top: 1px solid var(--c-border-brand);
+            border-bottom: 1px solid var(--c-border);
+            padding: 1.25rem 3rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 4rem;
+            overflow: hidden;
+        }
+        .strip-item {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            white-space: nowrap;
+            font-size: 0.8rem;
+            color: var(--c-sub);
+            letter-spacing: 0.5px;
+        }
+        .strip-icon {
+            color: var(--c-brand);
+            font-size: 1.1rem;
+            font-weight: 600;
+        }
+        .strip-item strong {
+            color: var(--c-cream);
+            font-weight: 600;
+        }
+
+        /* ─── SECTIONS ───────────────────────────────────────── */
+        .section {
+            padding: 8rem 3rem;
+        }
+        .section-alt {
+            background: var(--c-surface);
+        }
+        .section-dark {
+            background: var(--c-deep);
+        }
+        .container {
+            max-width: 1160px;
+            margin: 0 auto;
+        }
+        .label {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 0.68rem;
+            letter-spacing: 3px;
+            text-transform: uppercase;
+            color: var(--c-brand);
+            font-weight: 600;
+            margin-bottom: 1rem;
+        }
+        .label::before {
+            content: '';
+            width: 20px; height: 1px;
+            background: var(--c-brand);
+        }
+        .section-title {
+            font-family: 'Playfair Display', serif;
+            font-size: clamp(2rem, 4.5vw, 3.2rem);
+            font-weight: 700;
+            line-height: 1.18;
+            color: var(--c-cream);
+            margin-bottom: 1.25rem;
+            letter-spacing: -0.5px;
+        }
+        .section-title .hl {
+            color: var(--c-brand);
+        }
+        .section-body {
+            font-size: 1.05rem;
+            color: var(--c-sub);
+            line-height: 1.8;
+            max-width: 560px;
+        }
+
+        /* ─── PROBLEMA ───────────────────────────────────────── */
+        .problema-layout {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 8rem;
+            align-items: center;
+        }
+        .problema-visual {
+            position: relative;
+        }
+        .problema-quote-block {
+            background: var(--c-raised);
+            border: 1px solid var(--c-border);
+            border-left: 3px solid var(--c-brand);
+            padding: 2.5rem;
+            border-radius: var(--r-md);
+            position: relative;
+        }
+        .problema-quote-block::before {
+            content: '\201C';
+            font-family: 'Playfair Display', serif;
+            font-size: 5rem;
+            color: var(--c-brand);
+            opacity: 0.2;
+            position: absolute;
+            top: 0.5rem; left: 1.5rem;
+            line-height: 1;
+        }
+        .problema-quote {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.5rem;
+            color: var(--c-cream);
+            line-height: 1.5;
+            font-style: italic;
+            margin-bottom: 1.5rem;
+        }
+        .problema-quote-author {
+            font-size: 0.75rem;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            color: var(--c-muted);
+        }
+        .problema-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.6rem;
+            margin-top: 2rem;
+        }
+        .tag {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.4rem;
+            padding: 0.5rem 1rem;
+            background: var(--c-raised);
+            border: 1px solid var(--c-border);
+            border-radius: 99px;
+            font-size: 0.8rem;
+            color: var(--c-sub);
+        }
+        .tag-dot {
+            width: 5px; height: 5px;
+            border-radius: 50%;
+            background: var(--c-brand);
+            flex-shrink: 0;
+        }
+        .problema-text .section-body {
+            max-width: 100%;
+        }
+        .problema-list {
+            list-style: none;
+            margin-top: 2rem;
+        }
+        .problema-list li {
+            display: flex;
+            align-items: flex-start;
+            gap: 0.75rem;
+            padding: 0.9rem 0;
+            border-bottom: 1px solid var(--c-border);
+            font-size: 0.95rem;
+            color: var(--c-sub);
+        }
+        .problema-list li:last-child { border: none; }
+        .problema-list-icon {
+            width: 20px; height: 20px;
+            border-radius: 50%;
+            background: rgba(196,30,42,0.12);
+            border: 1px solid rgba(196,30,42,0.3);
+            display: flex; align-items: center; justify-content: center;
+            font-size: 0.6rem;
+            color: var(--c-brand);
+            flex-shrink: 0;
+            margin-top: 1px;
+        }
+
+        /* ─── PILARES ─────────────────────────────────────────── */
+        .pilares-header {
+            text-align: center;
+            margin-bottom: 5rem;
+            max-width: 640px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+        .pilares-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 2px;
+        }
+        .pilar {
+            background: var(--c-raised);
+            padding: 3rem 2.5rem;
+            position: relative;
+            overflow: hidden;
+            transition: background 0.35s, transform 0.35s var(--ease-out);
+            cursor: default;
+        }
+        .pilar::after {
+            content: '';
+            position: absolute;
+            bottom: 0; left: 0; right: 0;
+            height: 3px;
+            background: var(--c-brand);
+            transform: scaleX(0);
+            transition: transform 0.4s var(--ease-out);
+            transform-origin: left;
+        }
+        .pilar:hover {
+            background: rgba(30,28,35,0.95);
+            transform: translateY(-4px);
+        }
+        .pilar:hover::after { transform: scaleX(1); }
+        .pilar-num {
+            font-family: 'Playfair Display', serif;
+            font-size: 4rem;
+            font-weight: 900;
+            color: rgba(196,30,42,0.08);
+            position: absolute;
+            top: 1rem; right: 1.5rem;
+            line-height: 1;
+            user-select: none;
+        }
+        .pilar-icon {
+            font-size: 2.4rem;
+            margin-bottom: 1.5rem;
+            opacity: 0.9;
+        }
+        .pilar h3 {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.35rem;
+            color: var(--c-cream);
+            margin-bottom: 0.75rem;
+            font-weight: 700;
+        }
+        .pilar p {
+            font-size: 0.9rem;
+            color: var(--c-sub);
+            line-height: 1.75;
+        }
+        .pilar-tag {
+            display: inline-block;
+            margin-top: 1.5rem;
+            font-size: 0.65rem;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            color: var(--c-brand);
+            font-weight: 600;
+        }
+
+        /* ─── AUTORIDAD ───────────────────────────────────────── */
+        .autoridad-layout {
+            display: grid;
+            grid-template-columns: 6fr 7fr;
+            gap: 8rem;
+            align-items: center;
+        }
+        .autoridad-img-wrap {
+            position: relative;
+            animation: fadeUp 1s 0.2s var(--ease-out) both;
+        }
+        .autoridad-img {
+            width: 100%;
+            aspect-ratio: 3/4;
+            object-fit: cover;
+            object-position: center top;
+            border-radius: var(--r-lg);
+            filter: grayscale(0%) brightness(1) contrast(1.05);
+            transition: filter 0.4s, transform 0.4s;
+            box-shadow: 0 40px 100px rgba(0,0,0,0.7);
+            transform: scale(1);
+        }
+        .autoridad-img-wrap:hover .autoridad-img {
+            filter: grayscale(0%) brightness(1.08) contrast(1.1);
+            transform: scale(1.02);
+        }
+        .autoridad-img-frame {
+            position: absolute;
+            inset: -16px;
+            border: 1.5px solid var(--c-border-brand);
+            border-radius: calc(var(--r-lg) + 8px);
+            pointer-events: none;
+        }
+        .autoridad-badge {
+            position: absolute;
+            bottom: -1.5rem;
+            right: -1.5rem;
+            background: var(--c-raised);
+            border: 1px solid var(--c-border-brand);
+            border-radius: var(--r-md);
+            padding: 1.25rem 1.5rem;
+        }
+        .autoridad-badge-num {
+            font-family: 'Playfair Display', serif;
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--c-brand);
+            line-height: 1;
+        }
+        .autoridad-badge-label {
+            font-size: 0.7rem;
+            letter-spacing: 1.5px;
+            text-transform: uppercase;
+            color: var(--c-muted);
+            margin-top: 3px;
+        }
+        .stats-row {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 1px;
+            background: var(--c-border);
+            margin-bottom: 2.5rem;
+            border-radius: var(--r-sm);
+            overflow: hidden;
+        }
+        .stat-cell {
+            background: var(--c-raised);
+            padding: 1.25rem;
+            text-align: center;
+        }
+        .stat-cell-num {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.6rem;
+            font-weight: 700;
+            color: var(--c-brand);
+        }
+        .stat-cell-label {
+            font-size: 0.7rem;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            color: var(--c-muted);
+            margin-top: 3px;
+        }
+        .credential-list {
+            list-style: none;
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+            margin-bottom: 2.5rem;
+        }
+        .credential-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 0.85rem;
+            font-size: 0.95rem;
+            color: var(--c-sub);
+        }
+        .credential-item-icon {
+            width: 22px; height: 22px;
+            border-radius: 50%;
+            background: var(--c-brand);
+            display: flex; align-items: center; justify-content: center;
+            font-size: 0.6rem;
+            color: #fff;
+            flex-shrink: 0;
+            margin-top: 1px;
+        }
+        .ig-pill {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.6rem;
+            background: rgba(196,30,42,0.07);
+            border: 1px solid var(--c-border-brand);
+            border-radius: 99px;
+            padding: 0.6rem 1.25rem;
+            font-size: 0.8rem;
+            color: var(--c-brand);
+            font-weight: 600;
+            letter-spacing: 0.5px;
+            transition: background 0.2s, border-color 0.2s;
+        }
+        .ig-pill:hover {
+            background: rgba(196,30,42,0.15);
+            border-color: var(--c-brand);
+        }
+
+        /* ─── MÓDULOS ─────────────────────────────────────────── */
+        .modulos-header {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 4rem;
+            align-items: end;
+            margin-bottom: 4rem;
+        }
+        .modulos-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 1.5rem;
+        }
+        .modulo-card {
+            background: var(--c-raised);
+            border: 1px solid var(--c-border);
+            border-radius: var(--r-md);
+            padding: 2.2rem;
+            position: relative;
+            transition: border-color 0.35s, transform 0.35s var(--ease-out), box-shadow 0.35s, background 0.35s;
+            overflow: hidden;
+        }
+        .modulo-card::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; right: 0;
+            height: 2.5px;
+            background: var(--c-brand);
+            opacity: 0;
+            transition: opacity 0.35s;
+        }
+        .modulo-card:hover {
+            border-color: var(--c-border-brand);
+            transform: translateY(-6px);
+            box-shadow: 0 24px 56px rgba(0,0,0,0.45);
+            background: rgba(30,28,35,0.8);
+        }
+        .modulo-card:hover::before { opacity: 1; }
+        .modulo-card.featured {
+            border-color: var(--c-border-brand);
+            background: linear-gradient(135deg, rgba(196,30,42,0.07) 0%, rgba(30,28,35,1) 60%);
+        }
+        .modulo-tag {
+            font-size: 0.65rem;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            color: var(--c-brand);
+            font-weight: 600;
+            margin-bottom: 1rem;
+            display: block;
+        }
+        .modulo-icon {
+            font-size: 2rem;
+            margin-bottom: 1.25rem;
+            opacity: 0.85;
+        }
+        .modulo-card h3 {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.1rem;
+            color: var(--c-cream);
+            margin-bottom: 0.6rem;
+            font-weight: 700;
+        }
+        .modulo-card p {
+            font-size: 0.875rem;
+            color: var(--c-muted);
+            line-height: 1.7;
+        }
+        .modulo-bonus {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.35rem;
+            margin-top: 1rem;
+            font-size: 0.72rem;
+            color: var(--c-brand);
+            font-weight: 600;
+            letter-spacing: 0.5px;
+        }
+        .modulo-bonus-dot {
+            width: 4px; height: 4px;
+            border-radius: 50%;
+            background: var(--c-brand);
+        }
+
+        /* ─── GARANTÍA ────────────────────────────────────────── */
+        .garantia-wrap {
+            max-width: 780px;
+            margin: 0 auto;
+            background: var(--c-raised);
+            border: 1.5px solid var(--c-border-brand);
+            border-radius: var(--r-lg);
+            padding: 4rem;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+            transition: border-color 0.3s, box-shadow 0.3s;
+        }
+        .garantia-wrap:hover {
+            border-color: var(--c-brand);
+            box-shadow: 0 20px 48px rgba(211,47,47,0.15);
+        }
+        .garantia-wrap::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: radial-gradient(ellipse at 50% 0%, rgba(196,30,42,0.08) 0%, transparent 60%);
+            pointer-events: none;
+        }
+        .garantia-shield {
+            width: 80px; height: 80px;
+            margin: 0 auto 2rem;
+            background: rgba(211,47,47,0.08);
+            border: 1.5px solid var(--c-border-brand);
+            border-radius: 50%;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 2.2rem;
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+        .garantia-wrap h2 {
+            font-family: 'Playfair Display', serif;
+            font-size: 2rem;
+            color: var(--c-cream);
+            margin-bottom: 1rem;
+        }
+        .garantia-wrap p {
+            font-size: 1rem;
+            color: var(--c-sub);
+            line-height: 1.8;
+            max-width: 560px;
+            margin: 0 auto 0.75rem;
+        }
+        .garantia-fine {
+            font-size: 0.8rem !important;
+            color: var(--c-muted) !important;
+            font-style: italic;
+        }
+
+        /* ─── TESTIMONIOS ─────────────────────────────────────── */
+        .testimonios-header {
+            text-align: center;
+            margin-bottom: 4rem;
+        }
+        .testimonios-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 1.5rem;
+        }
+        .testimonio {
+            background: var(--c-raised);
+            border: 1px solid var(--c-border);
+            border-radius: var(--r-md);
+            padding: 2.5rem;
+            position: relative;
+            transition: border-color 0.3s, transform 0.3s var(--ease-out), box-shadow 0.3s;
+        }
+        .testimonio:hover {
+            border-color: var(--c-border-brand);
+            transform: translateY(-4px);
+            box-shadow: 0 12px 32px rgba(0,0,0,0.3);
+        }
+        .testimonio-stars {
+            display: flex;
+            gap: 2px;
+            margin-bottom: 1.5rem;
+        }
+        .star {
+            color: var(--c-brand);
+            font-size: 0.9rem;
+        }
+        .testimonio-quote {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.05rem;
+            color: var(--c-text);
+            line-height: 1.7;
+            font-style: italic;
+            margin-bottom: 1.75rem;
+        }
+        .testimonio-author-row {
+            display: flex;
+            align-items: center;
+            gap: 0.85rem;
+        }
+        .testimonio-avatar {
+            width: 40px; height: 40px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--c-flame), var(--c-gold));
+            display: flex; align-items: center; justify-content: center;
+            font-family: 'Playfair Display', serif;
+            font-size: 1rem;
+            color: #fff;
+            font-weight: 700;
+            flex-shrink: 0;
+        }
+        .testimonio-name {
+            font-weight: 600;
+            font-size: 0.9rem;
+            color: var(--c-cream);
+        }
+        .testimonio-role {
+            font-size: 0.78rem;
+            color: var(--c-muted);
+        }
+        .testimonio-highlight {
+            grid-column: span 2;
+            background: linear-gradient(135deg, rgba(211,47,47,0.08) 0%, var(--c-raised) 100%);
+            border-color: var(--c-border-brand);
+            border-width: 2px;
+        }
+        .testimonio-highlight .testimonio-quote {
+            font-size: 1.15rem;
+        }
+
+        /* ─── FAQ ─────────────────────────────────────────────── */
+        .faq-wrap {
+            max-width: 752px;
+            margin: 0 auto;
+        }
+        .faq-header {
+            text-align: center;
+            margin-bottom: 3.5rem;
+        }
+        .faq-item {
+            border-bottom: 1px solid var(--c-border);
+        }
+        .faq-question {
+            width: 100%;
+            background: none;
+            border: none;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 1.5rem 0;
+            text-align: left;
+            font-size: 1rem;
+            color: var(--c-cream);
+            font-weight: 500;
+            cursor: pointer;
+            transition: color 0.2s;
+            gap: 1rem;
+        }
+        .faq-question:hover { color: var(--c-brand); }
+        .faq-icon {
+            width: 32px; height: 32px;
+            border-radius: 50%;
+            border: 1.5px solid var(--c-border);
+            display: flex; align-items: center; justify-content: center;
+            font-size: 1.1rem;
+            color: var(--c-brand);
+            flex-shrink: 0;
+            transition: transform 0.4s var(--ease-out), border-color 0.3s, background 0.3s;
+        }
+        .faq-item.open .faq-icon {
+            transform: rotate(45deg);
+            background: rgba(211,47,47,0.1);
+            border-color: var(--c-brand);
+        }
+        .faq-answer {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.45s var(--ease-out), padding 0.3s;
+        }
+        .faq-item.open .faq-answer {
+            max-height: 300px;
+        }
+        .faq-answer-inner {
+            padding-bottom: 1.5rem;
+            font-size: 0.95rem;
+            color: var(--c-sub);
+            line-height: 1.8;
+        }
+
+        /* ─── CTA FINAL ───────────────────────────────────────── */
+        .cta-final {
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+        .cta-final-bg {
+            position: absolute;
+            inset: 0;
+            background: radial-gradient(ellipse at 50% 0%, rgba(196,30,42,0.12) 0%, transparent 60%);
+            pointer-events: none;
+        }
+        .cta-final-content {
+            position: relative;
+            z-index: 1;
+        }
+        .cta-final h2 {
+            font-family: 'Playfair Display', serif;
+            font-size: clamp(2.2rem, 5vw, 3.8rem);
+            color: var(--c-cream);
+            max-width: 720px;
+            margin: 0 auto 1.5rem;
+            line-height: 1.1;
+            letter-spacing: -0.5px;
+        }
+        .cta-final-sub {
+            font-size: 1.1rem;
+            color: var(--c-sub);
+            max-width: 540px;
+            margin: 0 auto 2.5rem;
+            line-height: 1.8;
+        }
+        .cta-final-urgency {
+            margin-top: 1.75rem;
+            font-size: 0.8rem;
+            color: var(--c-muted);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 1.5rem;
+            flex-wrap: wrap;
+        }
+        .urgency-item {
+            display: flex;
+            align-items: center;
+            gap: 0.4rem;
+        }
+        .urgency-dot {
+            width: 5px; height: 5px;
+            border-radius: 50%;
+            background: var(--c-brand);
+        }
+
+        /* ─── FOOTER ──────────────────────────────────────────── */
+        footer {
+            background: #050307;
+            border-top: 1px solid var(--c-border-brand);
+            padding: 3rem;
+            display: grid;
+            grid-template-columns: 1fr auto;
+            align-items: center;
+            gap: 2rem;
+        }
+        .footer-left {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+        .footer-logo-img {
+            height: 30px;
+            width: auto;
+            background: rgba(255,255,255,0.9);
+            border-radius: 5px;
+            padding: 4px 12px;
+            transition: opacity 0.2s;
+        }
+        .footer-logo-img:hover {
+            opacity: 0.75;
+        }
+        .footer-tagline {
+            font-size: 0.68rem;
+            color: var(--c-muted);
+            letter-spacing: 2px;
+            text-transform: uppercase;
+        }
+        .footer-links {
+            display: flex;
+            gap: 2rem;
+            font-size: 0.78rem;
+            color: var(--c-muted);
+        }
+        .footer-links a:hover { color: var(--c-brand); }
+        .footer-copy {
+            grid-column: 1 / -1;
+            font-size: 0.75rem;
+            color: rgba(122,112,104,0.5);
+            padding-top: 1.5rem;
+            border-top: 1px solid var(--c-border);
+        }
+
+        /* ─── INSTAGRAM CAROUSEL ──────────────────────────────────── */
+        .instagram-section {
+            background: var(--c-deep);
+            padding: 8rem 3rem;
+        }
+        .instagram-header {
+            text-align: center;
+            margin-bottom: 4rem;
+        }
+        .instagram-carousel {
+            position: relative;
+            max-width: 500px;
+            margin: 0 auto;
+        }
+        .carousel-wrapper {
+            position: relative;
+            aspect-ratio: 1;
+            border-radius: var(--r-lg);
+            overflow: hidden;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.6);
+        }
+        .carousel-items {
+            display: flex;
+            transition: transform 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .carousel-item {
+            min-width: 100%;
+            aspect-ratio: 1;
+            position: relative;
+        }
+        .carousel-item img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        .carousel-item-overlay {
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(135deg, rgba(0,0,0,0) 0%, rgba(0,0,0,0.4) 100%);
+            display: flex;
+            align-items: flex-end;
+            padding: 2rem;
+        }
+        .carousel-item-text {
+            color: #fff;
+            font-size: 0.9rem;
+            line-height: 1.6;
+        }
+        .carousel-controls {
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+            margin-top: 2rem;
+        }
+        .carousel-dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background: var(--c-border);
+            cursor: pointer;
+            transition: background 0.3s, transform 0.3s;
+        }
+        .carousel-dot.active {
+            background: var(--c-brand);
+            transform: scale(1.2);
+        }
+        .carousel-btn {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            background: rgba(0,0,0,0.4);
+            border: none;
+            color: #fff;
+            width: 44px;
+            height: 44px;
+            border-radius: 50%;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: background 0.3s;
+            z-index: 10;
+        }
+        .carousel-btn:hover {
+            background: rgba(0,0,0,0.7);
+        }
+        .carousel-btn.prev {
+            left: 1rem;
+        }
+        .carousel-btn.next {
+            right: 1rem;
+        }
+        .instagram-cta {
+            text-align: center;
+            margin-top: 3rem;
+        }
+        .instagram-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.6rem;
+            background: linear-gradient(135deg, #f09433 0%, #e6683c 25%, #dc2743 50%, #cc2366 75%, #bc1888 100%);
+            color: #fff;
+            padding: 1rem 2.5rem;
+            border-radius: var(--r-sm);
+            font-weight: 600;
+            text-decoration: none;
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+        .instagram-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 12px 32px rgba(220, 39, 67, 0.3);
+        }
+        @media (max-width: 768px) {
+            .instagram-section {
+                padding: 5rem 1.5rem;
+            }
+            .carousel-btn {
+                width: 36px;
+                height: 36px;
+                font-size: 0.9rem;
+            }
+        }
+
+        /* ─── ANIMATIONS ──────────────────────────────────────── */
+        @keyframes fadeUp {
+            from { opacity:0; transform:translateY(32px); }
+            to   { opacity:1; transform:translateY(0); }
+        }
+        @keyframes fadeLeft {
+            from { opacity:0; transform:translateX(32px); }
+            to   { opacity:1; transform:translateX(0); }
+        }
+        @keyframes slideDown {
+            from { opacity:0; transform:translateY(-16px); }
+            to   { opacity:1; transform:translateY(0); }
+        }
+        @keyframes pulse-glow {
+            0% { box-shadow: 0 0 0 0 rgba(211, 47, 47, 0.7); }
+            50% { box-shadow: 0 0 0 20px rgba(211, 47, 47, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(211, 47, 47, 0); }
+        }
+        @keyframes bounce-scale {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+        }
+        .btn-cta-hero {
+            animation: pulse-glow 2s infinite, bounce-scale 2s infinite;
+        }
+
+        /* Scroll-reveal utility */
+        .reveal {
+            opacity: 0;
+            transform: translateY(32px);
+            transition: opacity 0.8s var(--ease-out), transform 0.8s var(--ease-out);
+        }
+        .reveal.visible {
+            opacity: 1;
+            transform: none;
+        }
+        .reveal-delay-1 { transition-delay: 0.1s; }
+        .reveal-delay-2 { transition-delay: 0.2s; }
+        .reveal-delay-3 { transition-delay: 0.3s; }
+        .reveal-delay-4 { transition-delay: 0.4s; }
+
+        /* ─── RESPONSIVE ─────────────────────────────────────── */
+        @media (max-width: 1024px) {
+            .nav { padding: 1rem 2rem; }
+            .section { padding: 6rem 2rem; }
+            .hero-content { padding: 0 2rem 6rem; }
+            .hero-stats { right: 2rem; bottom: 2rem; }
+            .autoridad-layout { grid-template-columns: 1fr 1fr; gap: 4rem; }
+            .problema-layout { grid-template-columns: 1fr; gap: 4rem; }
+            .modulos-header { grid-template-columns: 1fr; gap: 2rem; }
+            .modulos-grid { grid-template-columns: repeat(2, 1fr); }
+        }
+        @media (max-width: 768px) {
+            .nav { padding: 1.2rem 1.5rem; }
+            .nav-logo-img { height: 28px; }
+            .hero h1, .hero-h1 { font-size: 2.2rem; }
+            .hero-stats { display: none; }
+            .strip { gap: 1.2rem; flex-wrap: wrap; padding: 1.5rem 1.5rem; font-size: 0.75rem; }
+            .section { padding: 5rem 1.5rem; }
+            .pilares-grid { grid-template-columns: 1fr; }
+            .autoridad-layout { grid-template-columns: 1fr; gap: 3rem; }
+            .autoridad-img { aspect-ratio: 3/4; }
+            .autoridad-img-frame { inset: -10px; }
+            .autoridad-badge { display: none; }
+            .modulos-grid { grid-template-columns: 1fr; }
+            .modulo-card { padding: 1.8rem; }
+            .testimonios-grid { grid-template-columns: 1fr; }
+            .testimonio-highlight { grid-column: auto; }
+            .footer { grid-template-columns: 1fr; gap: 1.5rem; }
+            .garantia-wrap { padding: 2.5rem 1.5rem; }
+            .modulos-header { grid-template-columns: 1fr; }
+            .stats-row { grid-template-columns: repeat(3, 1fr); }
+        }
+        @media (max-width: 480px) {
+            .nav { padding: 1rem 1.2rem; }
+            .hero-inner { padding: 5rem 1.2rem 2rem; gap: 2rem; }
+            .hero-h1 { font-size: 1.8rem; }
+            .hero-sub { font-size: 1rem; }
+            .hero-actions { flex-direction: column; align-items: stretch; }
+            .btn-primary { width: 100%; }
+            .cta-final-urgency { flex-direction: column; gap: 0.8rem; }
+            .strip { padding: 1rem 1.2rem; gap: 0.8rem; font-size: 0.7rem; }
+            .section { padding: 4rem 1.2rem; }
+            .section-title { font-size: 1.8rem; }
+            .modulo-card { padding: 1.6rem; }
+            .autoridad-img-wrap { margin-bottom: 1.5rem; }
+            .problem-layout { gap: 2rem; }
+            .garantia-wrap { padding: 2rem 1.2rem; }
+        }
+
+        /* ─── PRICING ──────────────────────────────────────────── */
+        .pricing-section {
+            padding: 8rem 2rem;
+            background: linear-gradient(180deg, rgba(211, 47, 47, 0.05) 0%, rgba(3, 3, 4, 0) 100%);
+            border-top: 2px solid var(--c-border-brand);
+            position: relative;
+            overflow: hidden;
+        }
+        .pricing-section::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, var(--c-brand), transparent);
+        }
+        .pricing-header {
+            text-align: center;
+            margin-bottom: 5rem;
+        }
+        .pricing-header .label {
+            margin-bottom: 1.5rem;
+            font-size: 0.85rem;
+            letter-spacing: 2px;
+            color: var(--c-brand);
+            font-weight: 700;
+            text-transform: uppercase;
+        }
+        .pricing-header h2 {
+            font-size: 3.5rem;
+            font-family: var(--ff-display);
+            margin-bottom: 2rem;
+            color: #fff;
+            line-height: 1.2;
+        }
+        .pricing-header p {
+            font-size: 1.1rem;
+            color: var(--c-sub);
+            max-width: 700px;
+            margin: 0 auto;
+            line-height: 1.6;
+        }
+        .pricing-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 2.5rem;
+            max-width: 1300px;
+            margin: 0 auto;
+            align-items: flex-start;
+        }
+        .pricing-card {
+            background: linear-gradient(135deg, rgba(26, 25, 30, 0.8) 0%, rgba(18, 18, 21, 0.6) 100%);
+            border: 1.5px solid var(--c-border);
+            border-radius: var(--r-lg);
+            padding: 3.5rem 2.5rem;
+            display: flex;
+            flex-direction: column;
+            position: relative;
+            transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+            backdrop-filter: blur(10px);
+        }
+        .pricing-card:hover {
+            transform: translateY(-16px);
+            border-color: var(--c-brand);
+            box-shadow: 0 30px 80px rgba(211, 47, 47, 0.2);
+            background: linear-gradient(135deg, rgba(26, 25, 30, 0.95) 0%, rgba(18, 18, 21, 0.9) 100%);
+        }
+        .pricing-card.featured {
+            border: 2.5px solid var(--c-brand);
+            transform: scale(1.08) translateY(-20px);
+            box-shadow: 0 40px 100px rgba(211, 47, 47, 0.35);
+            background: linear-gradient(135deg, rgba(211, 47, 47, 0.1) 0%, rgba(26, 25, 30, 0.95) 100%);
+        }
+        .pricing-card.featured:hover {
+            transform: scale(1.08) translateY(-28px);
+            box-shadow: 0 50px 120px rgba(211, 47, 47, 0.45);
+        }
+        .pricing-badge {
+            position: absolute;
+            top: -16px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: linear-gradient(135deg, var(--c-brand) 0%, #ff6b6b 100%);
+            color: #fff;
+            padding: 0.7rem 1.8rem;
+            border-radius: 99px;
+            font-size: 0.8rem;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            box-shadow: 0 10px 30px rgba(211, 47, 47, 0.4);
+            animation: pulse-badge 2s ease-in-out infinite;
+        }
+        @keyframes pulse-badge {
+            0%, 100% { box-shadow: 0 10px 30px rgba(211, 47, 47, 0.4); }
+            50% { box-shadow: 0 10px 40px rgba(211, 47, 47, 0.6); }
+        }
+        .pricing-card-name {
+            font-size: 1.8rem;
+            font-family: var(--ff-display);
+            font-weight: 700;
+            margin: 2rem 0 1rem 0;
+            color: #fff;
+        }
+        .pricing-card-desc {
+            font-size: 0.95rem;
+            color: var(--c-sub);
+            margin-bottom: 2.5rem;
+            min-height: 2.4rem;
+            line-height: 1.5;
+        }
+        .pricing-price {
+            font-size: 4rem;
+            font-family: var(--ff-display);
+            font-weight: 900;
+            color: var(--c-brand);
+            margin: 1.5rem 0 0.5rem 0;
+            letter-spacing: -2px;
+        }
+        .pricing-card.featured .pricing-price {
+            font-size: 4.5rem;
+        }
+        .pricing-price-sub {
+            font-size: 0.85rem;
+            color: var(--c-muted);
+            margin-bottom: 3rem;
+            font-weight: 500;
+        }
+        .pricing-features {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 1.4rem;
+            margin-bottom: 3rem;
+        }
+        .pricing-feature {
+            display: flex;
+            align-items: flex-start;
+            gap: 1rem;
+            font-size: 0.95rem;
+            color: var(--c-text);
+            line-height: 1.5;
+        }
+        .pricing-feature-icon {
+            width: 24px;
+            height: 24px;
+            flex-shrink: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(135deg, rgba(211, 47, 47, 0.2) 0%, rgba(211, 47, 47, 0.05) 100%);
+            border-radius: 50%;
+            border: 1px solid rgba(211, 47, 47, 0.3);
+            font-size: 0.75rem;
+            color: var(--c-brand);
+            font-weight: 800;
+            margin-top: 2px;
+        }
+        .pricing-cta {
+            background: linear-gradient(135deg, var(--c-brand) 0%, #ff6b6b 100%);
+            color: #fff;
+            border: none;
+            padding: 1.2rem 2.5rem;
+            border-radius: var(--r-sm);
+            font-size: 0.98rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+            text-decoration: none;
+            display: block;
+            text-align: center;
+            letter-spacing: 0.5px;
+            box-shadow: 0 10px 30px rgba(211, 47, 47, 0.2);
+            position: relative;
+            overflow: hidden;
+        }
+        .pricing-cta::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+            transition: left 0.5s;
+        }
+        .pricing-cta:hover::before {
+            left: 100%;
+        }
+        .pricing-cta:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 15px 50px rgba(211, 47, 47, 0.35);
+        }
+        .pricing-card.featured .pricing-cta {
+            padding: 1.4rem 3rem;
+            font-size: 1.02rem;
+            font-weight: 800;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+        }
+
+        @media (max-width: 1024px) {
+            .pricing-grid { grid-template-columns: 1fr; gap: 2rem; }
+            .pricing-card.featured { transform: scale(1); }
+            .pricing-card.featured:hover { transform: translateY(-16px); }
+            .pricing-header h2 { font-size: 2.5rem; }
+            .pricing-price { font-size: 3.5rem; }
+            .pricing-card.featured .pricing-price { font-size: 3.8rem; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- ─── NAV ───────────────────────────────────────────────── -->
+    <nav class="nav" id="mainNav">
+        <a href="#" class="nav-logo" aria-label="Ir al inicio — Lienzo y Fuego">
+            <!-- Logo horizontal blanco sobre oscuro -->
+            <img
+                src="FOTOS/logo/logo-horizontal.jpeg"
+                alt="Lienzo y Fuego"
+                class="nav-logo-img"
+                width="180"
+                height="38"
+                loading="eager"
+            >
+        </a>
+        <button class="nav-cta" onclick="window.location.href='https://hotmart.com/es/marketplace/productos/de-principiante-a-chef/P97284882E'">
+            Acceso Ahora
+        </button>
+    </nav>
+
+    <!-- ─── HERO ───────────────────────────────────────────────── -->
+    <section class="hero" id="home">
+        <div class="hero-inner">
+
+            <!-- Columna izquierda: copy -->
+            <div class="hero-text">
+                <img
+                    src="FOTOS/logo/logo-vertical.jpeg"
+                    alt="Lienzo y Fuego"
+                    class="hero-logo"
+                    width="160"
+                    height="44"
+                    loading="eager"
+                >
+                <div class="hero-eyebrow">Aprende · Impresiona · Monetiza</div>
+                <h1 class="hero-h1">
+                    Aprende a cocinar<br>como chef y <em>deja huella</em><br>donde más importa.
+                </h1>
+                <p class="hero-sub">
+                    Sorprende a tu pareja, familia y amigos — o cobra por ello. Sin experiencia previa entra a esta exclusiva comunidad de Lienzo y Fuego.
+                </p>
+                <div class="hero-actions">
+                    <button class="btn-primary btn-cta-hero" onclick="window.location.href='https://hotmart.com/es/marketplace/productos/de-principiante-a-chef/P97284882E'">
+                        🔥 Obtener Acceso Ahora
+                    </button>
+                    <button class="btn-ghost" onclick="document.getElementById('vsl-anchor').scrollIntoView({behavior:'smooth'})">
+                        Ver la clase gratis
+                        <span class="btn-ghost-arrow">▶</span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Columna derecha: VSL YouTube -->
+            <div class="hero-vsl" id="vsl-anchor">
+                <div class="vsl-badge">▶ &nbsp;VER CLASE GRATUITA</div>
+                <div class="hero-vsl-frame">
+                    <iframe
+                        src="https://www.youtube.com/embed/kFHjHoWAMzw?rel=0&modestbranding=1&color=white"
+                        title="Clase gratuita — Lienzo y Fuego"
+                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                        allowfullscreen
+                        loading="lazy"
+                    ></iframe>
+                </div>
+                <div class="hero-vsl-glow"></div>
+            </div>
+
+        </div>
+
+        <div class="hero-stats">
+            <div class="hero-stat">
+                <div class="hero-stat-num">5.2K+</div>
+                <div class="hero-stat-label">Cocineros</div>
+            </div>
+            <div class="hero-divider"></div>
+            <div class="hero-stat">
+                <div class="hero-stat-num">30+</div>
+                <div class="hero-stat-label">Países</div>
+            </div>
+            <div class="hero-divider"></div>
+            <div class="hero-stat">
+                <div class="hero-stat-num">4.9 ★</div>
+                <div class="hero-stat-label">Satisfacción</div>
+            </div>
+        </div>
+    </section>
+
+
+    <!-- ─── PROBLEMA ─────────────────────────────────────────────── -->
+    <section class="section" id="problema">
+        <div class="container">
+            <div class="problema-layout">
+                <div class="problema-visual reveal">
+                    <div class="problema-quote-block">
+                        <p class="problema-quote">
+                            "Sigo recetas perfectamente. El plato sale bien. Pero nadie lo recuerda."
+                        </p>
+                        <div class="problema-quote-author">— Patrón que repetimos todos</div>
+                    </div>
+                    <div class="problema-tags">
+                        <span class="tag"><span class="tag-dot"></span>Dependencia de tutoriales</span>
+                        <span class="tag"><span class="tag-dot"></span>Sin estilo propio</span>
+                        <span class="tag"><span class="tag-dot"></span>Cocina correcta, no memorable</span>
+                        <span class="tag"><span class="tag-dot"></span>No sabes improvisar</span>
+                    </div>
+                </div>
+                <div class="problema-text reveal reveal-delay-2">
+                    <div class="label">El diagnóstico</div>
+                    <h2 class="section-title">
+                        Cocinaste bien.<br><span class="hl">Pero nadie lo comenta</span><br>como esperabas.
+                    </h2>
+                    <p class="section-body">
+                        Sigues recetas. El plato sale correcto. Pero no sorprende. No tiene firma. No deja marca. La gente recuerda diferente, no bien.
+                    </p>
+                    <ul class="problema-list">
+                        <li>
+                            <span class="problema-list-icon">✕</span>
+                            Sin receta, no sabes por dónde empezar
+                        </li>
+                        <li>
+                            <span class="problema-list-icon">✕</span>
+                            No entiendes el "por qué" de cada técnica
+                        </li>
+                        <li>
+                            <span class="problema-list-icon">✕</span>
+                            Cada plato podría haber sido de cualquiera
+                        </li>
+                        <li>
+                            <span class="problema-list-icon">✕</span>
+                            El fuego te intimida en lugar de obedecerte
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ─── PILARES ──────────────────────────────────────────────── -->
+    <section class="section section-alt" id="metodo" style="display:none">
+        <div class="container">
+            <div class="pilares-header reveal">
+                <div class="label">El método</div>
+                <h2 class="section-title" style="text-align:center">
+                    Tres pilares.<br><span class="hl">Una identidad.</span>
+                </h2>
+                <p class="section-body" style="text-align:center;margin:0 auto">
+                    No enseñamos recetas. Enseñamos los principios que las generan. El criterio que transforma cocineros en artesanos.
+                </p>
+            </div>
+            <div class="pilares-grid reveal">
+                <div class="pilar">
+                    <div class="pilar-num">01</div>
+                    <div class="pilar-icon">🧬</div>
+                    <h3>Lógica Culinaria</h3>
+                    <p>Aprenderás el "por qué" detrás de cada decisión. No recetas: sistemas de pensamiento transferibles a infinitos platos.</p>
+                    <span class="pilar-tag">Fundamentos · Técnica · Principios</span>
+                </div>
+                <div class="pilar">
+                    <div class="pilar-num">02</div>
+                    <div class="pilar-icon">🔥</div>
+                    <h3>Dominio del Fuego</h3>
+                    <p>El fuego es criterio, textura, sabor y presentación. Aprenderás a controlarlo, adaptarlo y hacerlo tu herramienta principal.</p>
+                    <span class="pilar-tag">Calor · Control · Reacción</span>
+                </div>
+                <div class="pilar">
+                    <div class="pilar-num">03</div>
+                    <div class="pilar-icon">⚜️</div>
+                    <h3>Identidad Culinaria</h3>
+                    <p>Tu firma personal. Lo que te hace irrepetible. Cómo cada plato tuyo lleva una marca que nadie más puede imitar.</p>
+                    <span class="pilar-tag">Firma · Carácter · Diferencia</span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ─── AUTORIDAD ────────────────────────────────────────────── -->
+    <section class="section" id="mentor">
+        <div class="container">
+            <div class="autoridad-layout">
+                <div class="autoridad-img-wrap reveal">
+                    <div class="autoridad-img-frame"></div>
+                    <img
+                        src="FOTOS/mateogurmet.JPG"
+                        alt="Mateo Calderón — Chef mentor de Lienzo y Fuego"
+                        class="autoridad-img"
+                        loading="lazy"
+                        width="400"
+                        height="534"
+                    >
+                    <div class="autoridad-badge">
+                        <div class="autoridad-badge-num">41</div>
+                        <div class="autoridad-badge-label">Países</div>
+                    </div>
+                </div>
+                <div class="reveal reveal-delay-2">
+                    <div class="label">Tu mentor</div>
+                    <h2 class="section-title">
+                        Mateo Calderón,<br><span class="hl">Mentor de chefs</span><br>internacionales.
+                    </h2>
+                    <div class="stats-row">
+                        <div class="stat-cell">
+                            <div class="stat-cell-num">41</div>
+                            <div class="stat-cell-label">Países</div>
+                        </div>
+                        <div class="stat-cell">
+                            <div class="stat-cell-num">6</div>
+                            <div class="stat-cell-label">Países prof.</div>
+                        </div>
+                        <div class="stat-cell">
+                            <div class="stat-cell-num">19K+</div>
+                            <div class="stat-cell-label">Seguidores</div>
+                        </div>
+                    </div>
+                    <ul class="credential-list">
+                        <li class="credential-item">
+                            <span class="credential-item-icon">✓</span>
+                            Cocinó profesionalmente en restaurantes de 6 países distintos
+                        </li>
+                        <li class="credential-item">
+                            <span class="credential-item-icon">✓</span>
+                            Actualmente en Suiza, refinando criterio en una de las regiones más exigentes del mundo
+                        </li>
+                        <li class="credential-item">
+                            <span class="credential-item-icon">✓</span>
+                            5,200+ estudiantes transformados en 30+ países
+                        </li>
+                        <li class="credential-item">
+                            <span class="credential-item-icon">✓</span>
+                            Comparte criterio culinario profesional diariamente
+                        </li>
+                    </ul>
+                    <a href="https://instagram.com/mateo_gourmet" target="_blank" rel="noopener" class="ig-pill">
+                        📸 <strong>@mateo_gourmet</strong> — 19.1K followers
+                    </a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ─── PROGRAMA ─────────────────────────────────────────────── -->
+    <section class="section section-alt" id="programa">
+        <div class="container">
+            <div class="modulos-header">
+                <div class="reveal">
+                    <div class="label">El programa</div>
+                    <h2 class="section-title">
+                        Todo lo que<br><span class="hl">incluye</span> el acceso.
+                    </h2>
+                </div>
+                <div class="reveal reveal-delay-2">
+                    <p class="section-body">
+                        12 módulos intensos, bonos de alto valor y mentoría directa. Una inversión única con acceso de por vida.
+                    </p>
+                </div>
+            </div>
+            <div class="modulos-grid">
+                <div class="modulo-card featured reveal">
+                    <span class="modulo-tag">Core</span>
+                    <div class="modulo-icon" style="display:flex;align-items:center;justify-content:center;width:48px;height:48px;background:var(--c-ember-soft);border-radius:var(--r-md);margin-bottom:1rem">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="var(--c-brand)" stroke-width="2"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20M4 4h14a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2H6.5a2.5 2.5 0 0 1-2-2.5V4z"></path></svg>
+                    </div>
+                    <h3>10 Módulos · Calidad 4K</h3>
+                    <p>Aprende directamente de Mateo. Videos profesionales en 4K con todos sus tips, criterio y años de experiencia. Actualización de por vida. Acceso inmediato.</p>
+                </div>
+                <div class="modulo-card reveal reveal-delay-1">
+                    <span class="modulo-tag">Bono Exclusivo</span>
+                    <div class="modulo-icon" style="display:flex;align-items:center;justify-content:center;width:48px;height:48px;background:var(--c-ember-soft);border-radius:var(--r-md);margin-bottom:1rem">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="var(--c-brand)" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><path d="M12 6v6l4 2"></path></svg>
+                    </div>
+                    <h3>Tips Exclusivos de Mateo</h3>
+                    <p>Todos los secretos y técnicas que Mateo usa en sus clases en vivo. Lo que hace la diferencia real entre principiante y profesional.</p>
+                    <span class="modulo-bonus"><span class="modulo-bonus-dot"></span>Solo para miembros de la comunidad</span>
+                </div>
+                <div class="modulo-card reveal reveal-delay-2">
+                    <span class="modulo-tag">Bono Exclusivo</span>
+                    <div class="modulo-icon" style="display:flex;align-items:center;justify-content:center;width:48px;height:48px;background:var(--c-ember-soft);border-radius:var(--r-md);margin-bottom:1rem">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="var(--c-brand)" stroke-width="2"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2z"></path><path d="M12 6v6l4 2"></path></svg>
+                    </div>
+                    <h3>Acceso a Todas las Clases en Vivo</h3>
+                    <p>Participa donde Mateo responde directamente tus dudas. Aprende en tiempo real de su experiencia en 6 países.</p>
+                    <span class="modulo-bonus"><span class="modulo-bonus-dot"></span>Ilimitado para siempre</span>
+                </div>
+                <div class="modulo-card reveal">
+                    <span class="modulo-tag">Bono Exclusivo</span>
+                    <div class="modulo-icon" style="display:flex;align-items:center;justify-content:center;width:48px;height:48px;background:var(--c-ember-soft);border-radius:var(--r-md);margin-bottom:1rem">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="var(--c-brand)" stroke-width="2"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"></path></svg>
+                    </div>
+                    <h3>Comunidad Privada Lienzo y Fuego</h3>
+                    <p>Red exclusiva de estudiantes transformándose. Comparte, aprende, crece juntos. Donde la verdadera magia sucede.</p>
+                    <span class="modulo-bonus"><span class="modulo-bonus-dot"></span>Acceso de élite vitalicio</span>
+                </div>
+                <div class="modulo-card featured reveal reveal-delay-1" style="position:relative;overflow:hidden">
+                    <span class="modulo-tag">LO MÁS VALIOSO</span>
+                    <img src="FOTOS/IMG_2758 (1).JPG" alt="Chef Mateo Calderón" style="width:100%;height:140px;object-fit:cover;border-radius:var(--r-md);margin-bottom:1rem">
+                    <h3>Clases en Vivo con Mateo</h3>
+                    <p>Mateo responde TODAS tus preguntas en directo. Comunidad privada donde aprendes de otros. Material exclusivo. Acceso vitalicio. Este es el verdadero valor.</p>
+                    <span class="modulo-bonus"><span class="modulo-bonus-dot"></span>El beneficio exclusivo más importante</span>
+                </div>
+                <div class="modulo-card reveal reveal-delay-2">
+                    <span class="modulo-tag">Bono</span>
+                    <div class="modulo-icon" style="display:flex;align-items:center;justify-content:center;width:48px;height:48px;background:var(--c-ember-soft);border-radius:var(--r-md);margin-bottom:1rem">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="var(--c-brand)" stroke-width="2"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"></path><polyline points="17 21 17 13 7 13 7 21"></polyline><polyline points="7 3 7 8 15 8"></polyline></svg>
+                    </div>
+                    <h3>Certificado de Dominio Culinario</h3>
+                    <p>Certificado profesional reconocido que valida tu transformación y criterio culinario. Compartible en redes y LinkedIn.</p>
+                    <span class="modulo-bonus"><span class="modulo-bonus-dot"></span>Incluido sin costo adicional</span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ─── BENEFICIOS ────────────────────────────────────────────── -->
+    <section class="section section-dark">
+        <div class="container">
+            <div style="text-align:center;margin-bottom:4rem" class="reveal">
+                <div class="label" style="justify-content:center">Los resultados</div>
+                <h2 class="section-title" style="text-align:center">Cuando cocinas con criterio,<br><span class="hl">esto es lo que pasa.</span></h2>
+            </div>
+            <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:var(--c-border);border-radius:var(--r-md);overflow:hidden">
+                <div style="background:var(--c-raised);padding:2.5rem 2rem" class="reveal">
+                    <div style="width:48px;height:48px;background:var(--c-ember-soft);border-radius:var(--r-md);margin-bottom:1.5rem;display:flex;align-items:center;justify-content:center">
+                        <div style="width:24px;height:24px;border:2px solid var(--c-brand);border-radius:50%"></div>
+                    </div>
+                    <h3 style="font-family:'Playfair Display',serif;color:var(--c-cream);font-size:1.15rem;margin-bottom:0.75rem">Sorprendes sin esfuerzo</h3>
+                    <p style="font-size:0.9rem;color:var(--c-muted);line-height:1.75">Cada plato destaca porque entiende la lógica detrás. No es suerte. Es decisión consciente.</p>
+                </div>
+                <div style="background:var(--c-raised);padding:2.5rem 2rem" class="reveal reveal-delay-1">
+                    <div style="width:48px;height:48px;background:var(--c-ember-soft);border-radius:var(--r-md);margin-bottom:1.5rem;display:flex;align-items:center;justify-content:center">
+                        <div style="width:24px;height:24px;border:2px solid var(--c-brand);border-radius:50%"></div>
+                    </div>
+                    <h3 style="font-family:'Playfair Display',serif;color:var(--c-cream);font-size:1.15rem;margin-bottom:0.75rem">Cocinas sin recetas</h3>
+                    <p style="font-size:0.9rem;color:var(--c-muted);line-height:1.75">Improvisa, adapta, crea. Tu criterio reemplaza cualquier tutorial. Eres completamente autónomo.</p>
+                </div>
+                <div style="background:var(--c-raised);padding:2.5rem 2rem" class="reveal reveal-delay-2">
+                    <div style="width:48px;height:48px;background:var(--c-ember-soft);border-radius:var(--r-md);margin-bottom:1.5rem;display:flex;align-items:center;justify-content:center">
+                        <div style="width:24px;height:24px;border:2px solid var(--c-brand);border-radius:50%"></div>
+                    </div>
+                    <h3 style="font-family:'Playfair Display',serif;color:var(--c-cream);font-size:1.15rem;margin-bottom:0.75rem">Generas admiración real</h3>
+                    <p style="font-size:0.9rem;color:var(--c-muted);line-height:1.75">Notan la diferencia. Piden tu comida. Preguntan cómo lo haces. Tu cocina se convierte en marca.</p>
+                </div>
+                <div style="background:var(--c-raised);padding:2.5rem 2rem" class="reveal">
+                    <div style="width:48px;height:48px;background:var(--c-ember-soft);border-radius:var(--r-md);margin-bottom:1.5rem;display:flex;align-items:center;justify-content:center">
+                        <div style="width:24px;height:24px;border:2px solid var(--c-brand);border-radius:50%"></div>
+                    </div>
+                    <h3 style="font-family:'Playfair Display',serif;color:var(--c-cream);font-size:1.15rem;margin-bottom:0.75rem">Desarrollas confianza</h3>
+                    <p style="font-size:0.9rem;color:var(--c-muted);line-height:1.75">Cada decisión culinaria viene de entender. Sabes exactamente por qué cada técnica es correcta.</p>
+                </div>
+                <div style="background:var(--c-raised);padding:2.5rem 2rem" class="reveal reveal-delay-1">
+                    <div style="width:48px;height:48px;background:var(--c-ember-soft);border-radius:var(--r-md);margin-bottom:1.5rem;display:flex;align-items:center;justify-content:center">
+                        <div style="width:24px;height:24px;border:2px solid var(--c-brand);border-radius:50%"></div>
+                    </div>
+                    <h3 style="font-family:'Playfair Display',serif;color:var(--c-cream);font-size:1.15rem;margin-bottom:0.75rem">Tu firma destaca</h3>
+                    <p style="font-size:0.9rem;color:var(--c-muted);line-height:1.75">Una identidad culinaria personal. Memorable, diferenciada, irrepetible. Lo que te hace único.</p>
+                </div>
+                <div style="background:var(--c-raised);padding:2.5rem 2rem" class="reveal reveal-delay-2">
+                    <div style="width:48px;height:48px;background:var(--c-ember-soft);border-radius:var(--r-md);margin-bottom:1.5rem;display:flex;align-items:center;justify-content:center">
+                        <div style="width:24px;height:24px;border:2px solid var(--c-brand);border-radius:50%"></div>
+                    </div>
+                    <h3 style="font-family:'Playfair Display',serif;color:var(--c-cream);font-size:1.15rem;margin-bottom:0.75rem">Oportunidades emergen</h3>
+                    <p style="font-size:0.9rem;color:var(--c-muted);line-height:1.75">Catering, talleres, presencia. Sin buscarlo, tu identidad culinaria abre puertas que antes estaban cerradas.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ─── TESTIMONIOS ───────────────────────────────────────────── -->
+    <section class="section section-alt" id="testimonios">
+        <div class="container">
+            <div class="testimonios-header reveal">
+                <div class="label" style="justify-content:center">Transformaciones reales</div>
+                <h2 class="section-title" style="text-align:center">Lo que dicen quienes<br><span class="hl">ya cocinaron diferente.</span></h2>
+            </div>
+            <div class="testimonios-grid">
+                <div class="testimonio testimonio-highlight reveal">
+                    <div class="testimonio-rating" style="display:flex;align-items:center;gap:0.5rem;margin-bottom:1.5rem">
+                        <span style="font-size:0.85rem;color:var(--c-brand);font-weight:600">5.0</span>
+                        <div style="display:flex;gap:2px">
+                            <span class="star">★</span><span class="star">★</span><span class="star">★</span>
+                            <span class="star">★</span><span class="star">★</span>
+                        </div>
+                        <span style="font-size:0.75rem;color:var(--c-muted)">Verificado</span>
+                    </div>
+                    <p class="testimonio-quote">
+                        "Esperaba aprender recetas. Aprendí a pensar como cocinero. Ahora cuando veo un ingrediente, sé exactamente qué hacer. Mi familia y amigos preguntan qué cambió. La respuesta es todo."
+                    </p>
+                    <div class="testimonio-author-row">
+                        <div class="testimonio-avatar">M</div>
+                        <div>
+                            <div class="testimonio-name">María Lozano</div>
+                            <div class="testimonio-role">Ingeniera — Buenos Aires, Argentina</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="testimonio reveal reveal-delay-1">
+                    <div class="testimonio-rating" style="display:flex;align-items:center;gap:0.5rem;margin-bottom:1.5rem">
+                        <span style="font-size:0.85rem;color:var(--c-brand);font-weight:600">5.0</span>
+                        <div style="display:flex;gap:2px">
+                            <span class="star">★</span><span class="star">★</span><span class="star">★</span>
+                            <span class="star">★</span><span class="star">★</span>
+                        </div>
+                        <span style="font-size:0.75rem;color:var(--c-muted)">Verificado</span>
+                    </div>
+                    <p class="testimonio-quote">
+                        "Lo que me sorprende no es que cocine mejor. Es que ahora sé por qué cada decisión funciona. Antes era prueba y error. Ahora es criterio. Es completamente diferente."
+                    </p>
+                    <div class="testimonio-author-row">
+                        <div class="testimonio-avatar">J</div>
+                        <div>
+                            <div class="testimonio-name">Jorge Mendoza</div>
+                            <div class="testimonio-role">Empresario — Medellín, Colombia</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="testimonio reveal reveal-delay-2">
+                    <div class="testimonio-rating" style="display:flex;align-items:center;gap:0.5rem;margin-bottom:1.5rem">
+                        <span style="font-size:0.85rem;color:var(--c-brand);font-weight:600">5.0</span>
+                        <div style="display:flex;gap:2px">
+                            <span class="star">★</span><span class="star">★</span><span class="star">★</span>
+                            <span class="star">★</span><span class="star">★</span>
+                        </div>
+                        <span style="font-size:0.75rem;color:var(--c-muted)">Verificado</span>
+                    </div>
+                    <p class="testimonio-quote">
+                        "Mis amigos me pidieron que hiciera el catering de su boda. Nunca lo habría pensado posible. Ahora tengo proyectos de cocina que surgieron sin buscarlos. La identidad culinaria que construí abrió puertas reales."
+                    </p>
+                    <div class="testimonio-author-row">
+                        <div class="testimonio-avatar">S</div>
+                        <div>
+                            <div class="testimonio-name">Sofía Ruiz</div>
+                            <div class="testimonio-role">Abogada — Madrid, España</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="testimonio reveal reveal-delay-3">
+                    <div class="testimonio-rating" style="display:flex;align-items:center;gap:0.5rem;margin-bottom:1.5rem">
+                        <span style="font-size:0.85rem;color:var(--c-brand);font-weight:600">5.0</span>
+                        <div style="display:flex;gap:2px">
+                            <span class="star">★</span><span class="star">★</span><span class="star">★</span>
+                            <span class="star">★</span><span class="star">★</span>
+                        </div>
+                        <span style="font-size:0.75rem;color:var(--c-muted)">Verificado</span>
+                    </div>
+                    <p class="testimonio-quote">
+                        "Pasé de seguir instrucciones a entender la cocina. Cuando alguien me pregunta cómo hago algo, ahora tengo respuestas reales. No es suerte. Es decisión consciente en cada paso."
+                    </p>
+                    <div class="testimonio-author-row">
+                        <div class="testimonio-avatar">L</div>
+                        <div>
+                            <div class="testimonio-name">Luis Torres</div>
+                            <div class="testimonio-role">Médico — Ciudad de México, México</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ─── GARANTÍA ─────────────────────────────────────────────── -->
+    <section class="section" id="garantia">
+        <div class="container">
+            <div class="garantia-wrap reveal">
+                <div class="garantia-shield" style="background:rgba(211,47,47,0.12);display:flex;align-items:center;justify-content:center">
+                    <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="var(--c-brand)" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg>
+                </div>
+                <h2>Garantía de 7 días.<br>Cero riesgo.</h2>
+                <p>Si en 7 días no notas un cambio real en tu criterio, tu confianza y cómo cocinas, te devolvemos el 100% de tu inversión.</p>
+                <p>Sin formularios complicados. Sin preguntas. Sin excusas.</p>
+                <p class="garantia-fine">¿Por qué? Porque después de 5.200 estudiantes, sabemos con certeza que funciona.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- ─── FAQ ───────────────────────────────────────────────────── -->
+    <section class="section section-alt" id="faq">
+        <div class="container">
+            <div class="faq-header reveal">
+                <div class="label" style="justify-content:center">FAQ</div>
+                <h2 class="section-title" style="text-align:center">Preguntas<br><span class="hl">frecuentes.</span></h2>
+            </div>
+            <div class="faq-wrap">
+                <div class="faq-item reveal">
+                    <button class="faq-question" aria-expanded="false" onclick="toggleFaq(this)">
+                        ¿Tengo que tener experiencia previa?
+                        <span class="faq-icon">+</span>
+                    </button>
+                    <div class="faq-answer">
+                        <div class="faq-answer-inner">No. El programa es para personas que cocinan en casa, sin importar el nivel. Si sabes usar un sartén y quieres diferenciarte, puedes empezar.</div>
+                    </div>
+                </div>
+                <div class="faq-item reveal reveal-delay-1">
+                    <button class="faq-question" aria-expanded="false" onclick="toggleFaq(this)">
+                        ¿Qué pasa si no tengo tiempo?
+                        <span class="faq-icon">+</span>
+                    </button>
+                    <div class="faq-answer">
+                        <div class="faq-answer-inner">Cada módulo tiene aproximadamente 3 horas de video. El acceso es de por vida. Estudias a tu ritmo, sin fechas de entrega ni presión de tiempo.</div>
+                    </div>
+                </div>
+                <div class="faq-item reveal reveal-delay-2">
+                    <button class="faq-question" aria-expanded="false" onclick="toggleFaq(this)">
+                        ¿Voy a aprender 100 recetas?
+                        <span class="faq-icon">+</span>
+                    </button>
+                    <div class="faq-answer">
+                        <div class="faq-answer-inner">No. Aprenderás la lógica para crear infinitas. Tendrás 150+ recetas de referencia, pero el valor real está en entender el principio detrás de cada una.</div>
+                    </div>
+                </div>
+                <div class="faq-item reveal">
+                    <button class="faq-question" aria-expanded="false" onclick="toggleFaq(this)">
+                        ¿Realmente voy a mejorar?
+                        <span class="faq-icon">+</span>
+                    </button>
+                    <div class="faq-answer">
+                        <div class="faq-answer-inner">La garantía de 7 días existe porque funciona. Con 5,200+ estudiantes, tenemos la certeza de que si aplicas el método, el cambio ocurre. Si no, devolvemos tu inversión completa.</div>
+                    </div>
+                </div>
+                <div class="faq-item reveal reveal-delay-1">
+                    <button class="faq-question" aria-expanded="false" onclick="toggleFaq(this)">
+                        ¿Es solo para cocineros que quieren ser profesionales?
+                        <span class="faq-icon">+</span>
+                    </button>
+                    <div class="faq-answer">
+                        <div class="faq-answer-inner">No. Es para personas que quieren cocinar diferente, que quieren dejar marca, que quieren una identidad culinaria. No necesitas convertirte en chef profesional para lograrlo.</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ─── CTA FINAL ────────────────────────────────────────────── -->
+    <section class="section cta-final" id="cta-section">
+        <div class="cta-final-bg"></div>
+        <div class="container">
+            <div class="cta-final-content reveal">
+                <div class="label" style="justify-content:center">LA OPORTUNIDAD EXCLUSIVA</div>
+                <h2>
+                    Aprende directamente de Mateo.<br>
+                    <span class="hl">En la comunidad de élite.</span>
+                </h2>
+                <p class="cta-final-sub">
+                    Clases en vivo donde Mateo responde tus preguntas. Videos con todos sus tips. Comunidad privada donde transformas tu criterio culinario. <strong style="color:var(--c-cream)">Acceso exclusivo ahora.</strong>
+                </p>
+                <button class="btn-primary" style="padding:1.1rem 3rem;font-size:0.95rem" onclick="window.location.href='https://hotmart.com/es/marketplace/productos/de-principiante-a-chef/P97284882E'">
+                    Acceso Inmediato + Garantía 30 Días
+                </button>
+                <div class="cta-final-urgency">
+                    <div class="urgency-item">
+                        <span class="urgency-dot"></span>
+                        Acceso inmediato
+                    </div>
+                    <div class="urgency-item">
+                        <span class="urgency-dot"></span>
+                        Garantía 7 días sin riesgo
+                    </div>
+                    <div class="urgency-item">
+                        <span class="urgency-dot"></span>
+                        Actualización de por vida
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ─── PRICING ─────────────────────────────────────────────── -->
+    <section class="pricing-section">
+        <div class="container">
+            <div class="pricing-header reveal">
+                <div class="label">🔥 ELIGE TU CAMINO</div>
+                <h2>Transforma tu Cocina Hoy</h2>
+                <p>Tres planes pensados para ti. Todos con garantía de 7 días, acceso inmediato y la comunidad de 19K+ aprendices esperándote.</p>
+            </div>
+
+            <div class="pricing-grid reveal">
+                <!-- Plan 1: Curso Grabado -->
+                <div class="pricing-card">
+                    <h3 class="pricing-card-name">Fundamentos</h3>
+                    <p class="pricing-card-desc">Aprende a tu ritmo. Videos 4K permanentes.</p>
+
+                    <div class="pricing-price">$67</div>
+                    <div class="pricing-price-sub">Pago único · Acceso de por vida</div>
+
+                    <div class="pricing-features">
+                        <div class="pricing-feature">
+                            <div class="pricing-feature-icon">✓</div>
+                            <span><strong>20+ horas</strong> de contenido 4K profesional</span>
+                        </div>
+                        <div class="pricing-feature">
+                            <div class="pricing-feature-icon">✓</div>
+                            <span>Biblioteca completa de técnicas</span>
+                        </div>
+                        <div class="pricing-feature">
+                            <div class="pricing-feature-icon">✓</div>
+                            <span>Actualizaciones de por vida</span>
+                        </div>
+                        <div class="pricing-feature">
+                            <div class="pricing-feature-icon">✓</div>
+                            <span>Acceso en cualquier dispositivo</span>
+                        </div>
+                    </div>
+
+                    <button class="pricing-cta" onclick="window.location.href='https://hotmart.com/es/marketplace/productos/de-principiante-a-chef/P97284882E'">
+                        Comenzar Ahora
+                    </button>
+                </div>
+
+                <!-- Plan 2: Full (Featured) -->
+                <div class="pricing-card featured">
+                    <div class="pricing-badge">🎯 MÁS VENDIDO</div>
+                    <h3 class="pricing-card-name">Plan Completo</h3>
+                    <p class="pricing-card-desc">Todo lo que necesitas para dominar y prosperar.</p>
+
+                    <div class="pricing-price">$97</div>
+                    <div class="pricing-price-sub">Pago único · Acceso ilimitado</div>
+
+                    <div class="pricing-features">
+                        <div class="pricing-feature">
+                            <div class="pricing-feature-icon">✓</div>
+                            <span><strong>Curso completo 4K</strong> (20+ horas)</span>
+                        </div>
+                        <div class="pricing-feature">
+                            <div class="pricing-feature-icon">✓</div>
+                            <span><strong>Comunidad privada</strong> con 19K+ aprendices</span>
+                        </div>
+                        <div class="pricing-feature">
+                            <div class="pricing-feature-icon">✓</div>
+                            <span><strong>Clases en vivo semanales</strong> con Mateo</span>
+                        </div>
+                        <div class="pricing-feature">
+                            <div class="pricing-feature-icon">✓</div>
+                            <span>Mini cursos técnicos especializados</span>
+                        </div>
+                        <div class="pricing-feature">
+                            <div class="pricing-feature-icon">✓</div>
+                            <span>Acceso directo para preguntas en vivo</span>
+                        </div>
+                        <div class="pricing-feature">
+                            <div class="pricing-feature-icon">✓</div>
+                            <span>Actualizaciones constantes de contenido</span>
+                        </div>
+                    </div>
+
+                    <button class="pricing-cta" onclick="window.location.href='https://hotmart.com/es/marketplace/productos/de-principiante-a-chef/P97284882E'">
+                        Acceder Ahora
+                    </button>
+                </div>
+
+                <!-- Plan 3: Mentoría 1:1 -->
+                <div class="pricing-card">
+                    <h3 class="pricing-card-name">Mentoría Elite</h3>
+                    <p class="pricing-card-desc">Para los que quieren cambiar completamente.</p>
+
+                    <div class="pricing-price">$1K</div>
+                    <div class="pricing-price-sub">Inversión única · Transformación total</div>
+
+                    <div class="pricing-features">
+                        <div class="pricing-feature">
+                            <div class="pricing-feature-icon">✓</div>
+                            <span><strong>Todo del Plan Completo</strong> incluido</span>
+                        </div>
+                        <div class="pricing-feature">
+                            <div class="pricing-feature-icon">✓</div>
+                            <span><strong>Mentoría 1:1 personalizada</strong> con Mateo</span>
+                        </div>
+                        <div class="pricing-feature">
+                            <div class="pricing-feature-icon">✓</div>
+                            <span>Estrategia de monetización culinaria</span>
+                        </div>
+                        <div class="pricing-feature">
+                            <div class="pricing-feature-icon">✓</div>
+                            <span>Canal privado directo a Mateo</span>
+                        </div>
+                        <div class="pricing-feature">
+                            <div class="pricing-feature-icon">✓</div>
+                            <span>Programas de viaje y experiencias</span>
+                        </div>
+                        <div class="pricing-feature">
+                            <div class="pricing-feature-icon">✓</div>
+                            <span>Plan de transformación de vida</span>
+                        </div>
+                    </div>
+
+                    <button class="pricing-cta" onclick="window.location.href='https://hotmart.com/es/marketplace/productos/de-principiante-a-chef/P97284882E'">
+                        Agendar Consulta
+                    </button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ─── INSTAGRAM CAROUSEL ──────────────────────────────────── -->
+    <section class="instagram-section">
+        <div class="container">
+            <div class="instagram-header reveal">
+                <div class="label" style="justify-content:center">ACCESO A LA EXPERIENCIA DE MATEO</div>
+                <h2 class="section-title" style="text-align:center">Todo lo que Mateo aprendió<br><span class="hl">En 6 países. Ahora es tuyo.</span></h2>
+                <p class="section-body" style="text-align:center;margin:0 auto;margin-top:1rem">
+                    Mateo perfeccionó su criterio en las cocinas más exigentes del mundo. Ahora enseña TODO en Lienzo y Fuego. Aprende directamente de su experiencia en tiempo real.
+                </p>
+            </div>
+            <div class="instagram-carousel reveal">
+                <div class="carousel-wrapper">
+                    <div class="carousel-items" id="carouselItems">
+                        <div class="carousel-item">
+                            <img src="FOTOS/carrusel 1.jpeg" alt="Mateo enseñando técnicas profesionales en vivo">
+                            <div class="carousel-item-overlay">
+                                <div class="carousel-item-text" style="font-size:1rem;font-weight:600">Clases en vivo donde Mateo comparte lo que aprendió en 6 países. Pregunta lo que quieras.</div>
+                            </div>
+                        </div>
+                        <div class="carousel-item">
+                            <img src="FOTOS/carrusel 2.jpeg" alt="Comunidad exclusiva de estudiantes transformándose" loading="lazy">
+                            <div class="carousel-item-overlay">
+                                <div class="carousel-item-text" style="font-size:1rem;font-weight:600">Comunidad exclusiva donde accedes directo a Mateo y otros aprendices en tu mismo nivel.</div>
+                            </div>
+                        </div>
+                        <div class="carousel-item">
+                            <img src="FOTOS/carrusel 3.jpeg" alt="Videos profesionales 4K con todos los secretos" loading="lazy">
+                            <div class="carousel-item-overlay">
+                                <div class="carousel-item-text" style="font-size:1rem;font-weight:600">Videos donde Mateo expone todos sus secretos en producción 4K.</div>
+                            </div>
+                        </div>
+                    </div>
+                    <button class="carousel-btn prev" onclick="moveCarousel(-1)">‹</button>
+                    <button class="carousel-btn next" onclick="moveCarousel(1)">›</button>
+                </div>
+                <div class="carousel-controls">
+                    <span class="carousel-dot active" onclick="goToSlide(0)"></span>
+                    <span class="carousel-dot" onclick="goToSlide(1)"></span>
+                    <span class="carousel-dot" onclick="goToSlide(2)"></span>
+                </div>
+            </div>
+            <div class="instagram-cta reveal" style="text-align:center">
+                <p style="font-size:0.95rem;color:var(--c-sub);margin-bottom:1.5rem;max-width:600px;margin-left:auto;margin-right:auto">
+                    Esto que ves es lo que comparte Mateo públicamente. Lo EXCLUSIVO es entrar a la comunidad privada donde enseña TODO lo que aprendió. Clases en vivo, videos completos, acceso directo a él. Todo está aquí.
+                </p>
+                <button class="btn-primary" style="padding:1.1rem 3rem;font-size:0.95rem;margin-bottom:1.5rem" onclick="window.location.href='https://hotmart.com/es/marketplace/productos/de-principiante-a-chef/P97284882E'">
+                    Acceder a la Comunidad Exclusiva
+                </button>
+                <div style="display:flex;align-items:center;justify-content:center;gap:1rem;font-size:0.85rem;color:var(--c-sub);flex-wrap:wrap">
+                    <span style="display:flex;align-items:center;gap:0.4rem">
+                        <span style="width:6px;height:6px;background:var(--c-brand);border-radius:50%;display:inline-block"></span>
+                        Acceso inmediato a todo
+                    </span>
+                    <span style="display:flex;align-items:center;gap:0.4rem">
+                        <span style="width:6px;height:6px;background:var(--c-brand);border-radius:50%;display:inline-block"></span>
+                        Garantía 7 días
+                    </span>
+                    <span style="display:flex;align-items:center;gap:0.4rem">
+                        <span style="width:6px;height:6px;background:var(--c-brand);border-radius:50%;display:inline-block"></span>
+                        19K+ en la comunidad
+                    </span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ─── AUTORIDAD INSTAGRAM ─────────────────────────────────── -->
+    <div class="authority-strip reveal" style="display:none;">
+        <div class="authority-strip-inner">
+
+            <img
+                src="FOTOS/IMG_2758 (1).JPG"
+                alt="Chef Mateo Calderón"
+                class="authority-avatar"
+                width="110"
+                height="110"
+                loading="lazy"
+            >
+
+            <div class="authority-info">
+                <div class="authority-handle">Tu guía</div>
+                <div class="authority-name">Chef Mateo Calderón</div>
+                <p class="authority-bio">
+                    Chef ejecutivo con experiencia en más de 35 países y 6 cocinas profesionales internacionales. Su método no viene de teoría: nace del fuego real, de la disciplina y de años perfeccionando el criterio culinario.
+                </p>
+                <a
+                    href="https://www.instagram.com/mateo_gourmet/"
+                    target="_blank"
+                    rel="noopener"
+                    class="authority-ig-btn"
+                    aria-label="Ver Instagram de Mateo Gourmet"
+                >
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zM12 0C8.741 0 8.333.014 7.053.072 2.695.272.273 2.69.073 7.052.014 8.333 0 8.741 0 12c0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98C8.333 23.986 8.741 24 12 24c3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98C15.668.014 15.259 0 12 0zm0 5.838a6.162 6.162 0 100 12.324 6.162 6.162 0 000-12.324zM12 16a4 4 0 110-8 4 4 0 010 8zm6.406-11.845a1.44 1.44 0 100 2.881 1.44 1.44 0 000-2.881z"/></svg>
+                    @mateo_gourmet
+                </a>
+            </div>
+
+            <div class="authority-stats">
+                <div class="authority-stat-item">
+                    <div class="authority-stat-num">5.2K+</div>
+                    <div class="authority-stat-label">Estudiantes</div>
+                </div>
+                <div class="authority-stat-item">
+                    <div class="authority-stat-num">35+</div>
+                    <div class="authority-stat-label">Países</div>
+                </div>
+                <div class="authority-stat-item">
+                    <div class="authority-stat-num">4.9 ★</div>
+                    <div class="authority-stat-label">Satisfacción</div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- ─── FOOTER ────────────────────────────────────────────────── -->
+    <footer style="background:#030304;border-top:1.5px solid var(--c-border-brand);padding:6rem 3rem 3rem">
+        <div style="max-width:1160px;margin:0 auto">
+            <!-- Footer Top -->
+            <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:4rem;margin-bottom:4rem">
+                <!-- Brand -->
+                <div style="display:flex;flex-direction:column;gap:1.5rem">
+                    <img
+                        src="FOTOS/logo/logo-horizontal.jpeg"
+                        alt="Lienzo y Fuego"
+                        width="140"
+                        height="32"
+                        loading="lazy"
+                        style="display:block;max-width:140px"
+                    >
+                    <div>
+                        <div style="font-size:0.7rem;color:var(--c-brand);font-weight:700;letter-spacing:2.5px;text-transform:uppercase;margin-bottom:0.5rem">Academia Culinaria</div>
+                        <p style="font-size:0.85rem;color:var(--c-sub);line-height:1.8;margin:0">
+                            Transformamos apasionados por la cocina en profesionales con identidad y criterio culinario real.
+                        </p>
+                    </div>
+                </div>
+
+                <!-- Links -->
+                <div style="display:flex;flex-direction:column;gap:0.8rem">
+                    <div style="font-size:0.7rem;color:var(--c-brand);font-weight:700;letter-spacing:2px;text-transform:uppercase;margin-bottom:0.5rem">Navegación</div>
+                    <a href="#home" style="font-size:0.85rem;color:var(--c-sub);text-decoration:none;transition:color 0.3s;display:inline-block" onmouseover="this.style.color='var(--c-brand)'" onmouseout="this.style.color='var(--c-sub)'">Inicio</a>
+                    <a href="#programa" style="font-size:0.85rem;color:var(--c-sub);text-decoration:none;transition:color 0.3s;display:inline-block" onmouseover="this.style.color='var(--c-brand)'" onmouseout="this.style.color='var(--c-sub)'">Programa</a>
+                    <a href="#testimonios" style="font-size:0.85rem;color:var(--c-sub);text-decoration:none;transition:color 0.3s;display:inline-block" onmouseover="this.style.color='var(--c-brand)'" onmouseout="this.style.color='var(--c-sub)'">Testimonios</a>
+                    <a href="#faq" style="font-size:0.85rem;color:var(--c-sub);text-decoration:none;transition:color 0.3s;display:inline-block" onmouseover="this.style.color='var(--c-brand)'" onmouseout="this.style.color='var(--c-sub)'">FAQ</a>
+                </div>
+
+                <!-- Redes & Legal -->
+                <div style="display:flex;flex-direction:column;gap:1.5rem;text-align:right">
+                    <div>
+                        <div style="font-size:0.7rem;color:var(--c-brand);font-weight:700;letter-spacing:2px;text-transform:uppercase;margin-bottom:0.75rem">Síguenos</div>
+                        <a href="https://instagram.com/mateo_gourmet" target="_blank" rel="noopener" style="display:inline-flex;align-items:center;gap:0.5rem;font-size:0.85rem;color:var(--c-sub);text-decoration:none;transition:color 0.3s" onmouseover="this.style.color='var(--c-brand)'" onmouseout="this.style.color='var(--c-sub)'">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zM12 0C8.741 0 8.333.014 7.053.072 2.695.272.273 2.69.073 7.052.014 8.333 0 8.741 0 12c0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98C8.333 23.986 8.741 24 12 24c3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98C15.668.014 15.259 0 12 0z"/></svg>
+                            @mateo_gourmet
+                        </a>
+                    </div>
+                    <div style="display:flex;flex-direction:column;gap:0.6rem;font-size:0.8rem">
+                        <a href="#" style="color:var(--c-muted);text-decoration:none;transition:color 0.3s;text-align:right" onmouseover="this.style.color='var(--c-brand)'" onmouseout="this.style.color='var(--c-muted)'">Política de Privacidad</a>
+                        <a href="#" style="color:var(--c-muted);text-decoration:none;transition:color 0.3s;text-align:right" onmouseover="this.style.color='var(--c-brand)'" onmouseout="this.style.color='var(--c-muted)'">Términos de Servicio</a>
+                        <a href="#" style="color:var(--c-muted);text-decoration:none;transition:color 0.3s;text-align:right" onmouseover="this.style.color='var(--c-brand)'" onmouseout="this.style.color='var(--c-muted)'">Contacto</a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Divider -->
+            <div style="height:1px;background:var(--c-border);margin:0 0 2rem"></div>
+
+            <!-- Footer Bottom -->
+            <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:1.5rem">
+                <div style="font-size:0.75rem;color:var(--c-muted)">
+                    © 2026 Lienzo y Fuego. Todos los derechos reservados.
+                </div>
+                <div style="font-size:0.75rem;color:var(--c-muted)">
+                    Resultados individuales pueden variar. Garantía 7 días sin riesgo.
+                </div>
+                <div style="font-size:0.7rem;color:var(--c-muted);letter-spacing:1px">
+                    HECHO CON CRITERIO
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        /* ─── NAV scroll ─────────────────────────────────────── */
+        const nav = document.getElementById('mainNav');
+        window.addEventListener('scroll', () => {
+            nav.classList.toggle('scrolled', window.scrollY > 48);
+        }, { passive: true });
+
+        /* ─── FAQ toggle ─────────────────────────────────────── */
+        function toggleFaq(btn) {
+            const item = btn.closest('.faq-item');
+            const isOpen = item.classList.contains('open');
+            document.querySelectorAll('.faq-item.open').forEach(i => {
+                i.classList.remove('open');
+                i.querySelector('.faq-question').setAttribute('aria-expanded', 'false');
+            });
+            if (!isOpen) {
+                item.classList.add('open');
+                btn.setAttribute('aria-expanded', 'true');
+            }
+        }
+
+        /* ─── Carousel ───────────────────────────────────────── */
+        let currentSlide = 0;
+        function moveCarousel(dir) {
+            const items = document.querySelectorAll('.carousel-item');
+            currentSlide = (currentSlide + dir + items.length) % items.length;
+            updateCarousel();
+        }
+        function goToSlide(n) {
+            currentSlide = n;
+            updateCarousel();
+        }
+        function updateCarousel() {
+            const carousel = document.getElementById('carouselItems');
+            carousel.style.transform = `translateX(-${currentSlide * 100}%)`;
+            document.querySelectorAll('.carousel-dot').forEach((dot, i) => {
+                dot.classList.toggle('active', i === currentSlide);
+            });
+        }
+        // Auto-advance carousel
+        setInterval(() => {
+            const items = document.querySelectorAll('.carousel-item');
+            if (items.length > 0) moveCarousel(1);
+        }, 5000);
+
+        /* ─── Scroll reveal ──────────────────────────────────── */
+        const revealEls = document.querySelectorAll('.reveal');
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('visible');
+                    observer.unobserve(entry.target);
+                }
+            });
+        }, { threshold: 0.12, rootMargin: '0px 0px -48px 0px' });
+        revealEls.forEach(el => observer.observe(el));
+
+        /* ─── Smooth scroll all internal links ───────────────── */
+        document.querySelectorAll('a[href^="#"]').forEach(a => {
+            a.addEventListener('click', e => {
+                e.preventDefault();
+                const target = document.querySelector(a.getAttribute('href'));
+                if (target) target.scrollIntoView({ behavior: 'smooth' });
+            });
+        });
+    </script>
+</body>
+</html>
